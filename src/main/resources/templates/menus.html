@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <mycss th:replace="fragments::topcss">
+
+    </mycss>
+
+</head>
+
+<body>
+
+<div th:replace="fragments::topnav">
+
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+            <div th:replace="fragments::leftmenu">
+
+            </div>
+        </div>
+        <div class="col-md-10">
+            <table class="table table-hover">
+                <caption>菜单管理</caption>
+                <thead>
+                <tr>
+                    <td style="text-align: right;" colspan="8">
+                        <button data-toggle="modal" data-target="#myModal" type="button" class="btn btn-success">新建菜单
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>菜单名</td>
+                    <td>菜单链接</td>
+                    <td>菜单层级</td>
+                    <td>菜单图标</td>
+                    <td>菜单父ID</td>
+                    <td>删除</td>
+                    <td>编辑</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="menu :${menus}">
+                    <td th:text="${menu.menu_id}"></td>
+                    <td th:text="${menu.menu_name}"></td>
+                    <td th:text="${menu.menu_href}"></td>
+                    <td th:text="${menu.menu_level}"></td>
+                    <td th:text="${menu.menu_icon}"></td>
+                    <td th:text="${menu.menu_parent_id}"></td>
+
+                    <td><button th:onclick="|delMenu('${menu.menu_id}')|"   type="button"
+                           class="btn btn-danger">删除</button></td>
+                    <td><button  th:onclick="|updateMenu('${menu.menu_id}')|" type="button" class="btn btn-warning">编辑</button></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新建</h4></div>
+            <div class="modal-body">
+                <!--新建用户表单-->
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="menu_name" class="col-sm-3 control-label">菜单名称</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="menu_name"
+                                                      placeholder="请输入名字">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="menu_href" class="col-sm-3 control-label">菜单链接</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="menu_href" placeholder="请输入姓">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="menu_href" class="col-sm-3 control-label">菜单层级</label>
+                        <div class="col-sm-8">
+                           <select id="menu_level" class="form-control"
+                                   onchange="changelevel();">
+                               <option value="0">请选择菜单层级</option>
+                               <option value="1">一级菜单</option>
+                               <option value="2">二级菜单</option>
+                           </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="menu_href" class="col-sm-3 control-label">菜单图标</label>
+                        <div class="col-sm-8">
+<!--                            <input type="text" class="form-control" id="txt_boostrap_icon">-->
+                            <button class="btn btn-default"
+                                    role="iconpicker"></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="menu_href" class="col-sm-3 control-label">菜单父ID</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="menu_parent_id">
+                                <option>请选择父菜单</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <span id="span1"></span>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button onclick="save();" type="button" class="btn btn-primary">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!--编辑对话框-->
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel2">编辑</h4></div>
+            <div class="modal-body">
+                <!--新建用户表单-->
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="menu_name" class="col-sm-3 control-label">菜单ID</label>
+                        <div class="col-sm-8">
+                            <input READONLY type="text" class="form-control" id="menu_id2"
+                                   >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="menu_name" class="col-sm-3 control-label">菜单名称</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="menu_name2"
+                                   placeholder="请输入名字">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="menu_href" class="col-sm-3 control-label">菜单链接</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="menu_href2" placeholder="请输入姓">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="menu_href" class="col-sm-3 control-label">菜单层级</label>
+                        <div class="col-sm-8">
+                            <select id="menu_level2" class="form-control"
+                                    onchange="changelevel2();">
+                                <option value="0">请选择菜单层级</option>
+                                <option value="1">一级菜单</option>
+                                <option value="2">二级菜单</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="menu_href" class="col-sm-3 control-label">菜单图标</label>
+                        <div class="col-sm-8">
+                            <!--                            <input type="text" class="form-control" id="txt_boostrap_icon">-->
+                            <button  class="btn btn-default"
+                                    role="iconpicker"></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="menu_href" class="col-sm-3 control-label">菜单父ID</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="menu_parent_id2">
+                                <option>请选择父菜单</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <span id="span2"></span>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button onclick="saveMenu2();" type="button" class="btn btn-primary">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div th:replace="fragments::footjs">
+
+</div>
+
+<script>
+
+    function changelevel() {
+        //当它选择的值是一级。 父菜单id选默认值 0
+       var level= $('#menu_level').val();
+       console.log(level);
+        //当它选择的是二级。 父菜单id显示所有一级菜单
+
+        if(level=='1'){
+            //让父菜单默认选项选中。
+            //把父菜单清空。填充默认选项。 禁用掉。
+            $('#menu_parent_id').empty();
+            //添加默认选项
+            $('#menu_parent_id').append("<option value='0'>顶层菜单</option>")
+        }else if(level=='2'){
+            $('#menu_parent_id').empty();
+            //用ajax去数据库获取
+            var url="/menus/queryLevelOne";
+            $.post(url,{},function (data) {
+               var menus= data.menus;//一级菜单的数据集合
+                for(i=0;i<menus.length;i++){
+                    $("#menu_parent_id").append("<option value='"+menus[i].menu_id+"'>"+menus[i].menu_name+"</option>")
+                }
+
+            },'json')
+        }
+    }
+
+    function changelevel2() {
+        //当它选择的值是一级。 父菜单id选默认值 0
+        var level= $('#menu_level2').val();
+        console.log(level);
+        //当它选择的是二级。 父菜单id显示所有一级菜单
+
+        if(level=='1'){
+            //让父菜单默认选项选中。
+            //把父菜单清空。填充默认选项。 禁用掉。
+            $('#menu_parent_id2').empty();
+            //添加默认选项
+            $('#menu_parent_id2').append("<option value='0'>顶层菜单</option>")
+        }else if(level=='2'){
+            $('#menu_parent_id2').empty();
+            //用ajax去数据库获取
+            var url="/menus/queryLevelOne";
+            $.post(url,{},function (data) {
+                var menus= data.menus;//一级菜单的数据集合
+                for(i=0;i<menus.length;i++){
+                    $("#menu_parent_id2").append("<option value='"+menus[i].menu_id+"'>"+menus[i].menu_name+"</option>")
+                }
+
+            },'json')
+        }
+    }
+
+    function saveMenu2() {
+        //从表单中获取数据
+        var menu_id= $('#menu_id2').val();
+        var menu_name= $('#menu_name2').val();
+        var menu_href= $('#menu_href2').val();
+        var menu_level= $('#menu_level2').val();
+        var menu_parent_id= $('#menu_parent_id2').val();
+
+        var b= $("button.iconpicker input");
+        console.log(b);
+        var menu_icon=$(b[1]).val();
+
+        //jquery  ajax
+        //  get  post  ajax   load
+
+        $.post("/menus/saveMenu",
+            {
+                "menu_id":menu_id,
+                "menu_name":menu_name,
+                "menu_level":menu_level,
+                "menu_href":menu_href,
+                "menu_icon":menu_icon,
+                "menu_parent_id":menu_parent_id,
+            },
+            function (data) {
+                if(data.success=="true"){
+                    //数据插入成功
+                    // alert("数据插入成功");
+
+                    $('#span2').html("<font color='green'>数据修改成功</font>");
+                    //定时器
+                    setTimeout(function () {
+                        //关闭对话框
+                        $('#myModal2').modal('hide');
+                        //刷新页面
+                        window.location.href="/menus/menus";
+                    },3000);
+
+                }
+            },"json")
+    }
+    function updateMenu(id) {
+       //根据id查数据：
+        var url="/menus/queryMenuById";
+        //四个参数。 1. url   2.传给服务器的参数 json 3. 回调函数，4.返回的数据类型
+        $.post(url,{"menu_id":id},function (data) {
+                                    //调用成功后的处理
+                  console.log(data);
+                  //对话框
+            var menus=data.menu;
+            var menu=menus[0];
+            //对话框弹出之前准备数据。
+            $('#menu_id2').val(menu.menu_id);
+            $('#menu_name2').val(menu.menu_name);
+            $('#menu_href2').val(menu.menu_href);
+            $('#menu_level2').val(menu.menu_level);
+            //$('#menu_icon2').val(menu.menu_id);
+            //$('#menu_parent_id2').val(menu.menu_parent_id);
+            $("button.iconpicker input").val(menu.menu_icon)
+            var x="glyphicon  "+menu.menu_icon;
+            $("button.iconpicker i").attr('class',x);
+                  //通过代码 对话框
+            //判断菜单等级
+            if(menu.menu_level=='1'){
+                $('#menu_parent_id2').empty();
+                $('#menu_parent_id2').append("<option value='0'>顶层菜单</option>")
+                $('#myModal2').modal('show');
+            }else{
+
+                var url="/menus/queryLevelOne";
+                $.post(url,{},function (data) {
+                    var menus2= data.menus;//一级菜单的数据集合
+                    $('#menu_parent_id2').empty();
+                    for(i=0;i<menus2.length;i++){
+                        $("#menu_parent_id2").append("<option value='"+menus2[i].menu_id+"'>"+menus2[i].menu_name+"</option>")
+                    }
+                    //ajax 填充完成
+                    //让选中项选中
+                    $('#menu_parent_id2').val(menu.menu_parent_id);
+
+                    $('#myModal2').modal('show');
+                },'json')
+            }
+
+
+
+        },"json");
+    }
+     function delMenu(id) {
+
+          if(window.confirm("确认要删除吗？")){
+              //执行删除
+              //浏览器跳转到  删除超链接
+              location.href="/menus/delmenu?menu_id="+id;
+          }else{
+              //什么也不做。
+          }
+     }
+
+
+     function save() {
+
+        var menu_name= $('#menu_name').val();
+        var menu_href= $('#menu_href').val();
+        var b= $("button.iconpicker input");
+        console.log($(b[0]).val());
+        var menu_icon=$(b[0]).val();
+
+        var menu_level= $('#menu_level').val();
+         var menu_parent_id=$('#menu_parent_id').val();
+
+        //jquery  ajax
+         //  get  post  ajax   load
+
+          $.post("/menus/insertmenu",
+                 {"menu_name":menu_name,
+                  "menu_href":menu_href,
+                  "menu_icon":menu_icon,
+                  "menu_level":menu_level,
+                  "menu_parent_id":menu_parent_id
+                 },
+                 function (data) {
+                     if(data.success=="true"){
+
+                         $('#span1').html("<font color='green'>数据插入成功</font>");
+                         //定时器
+                         setTimeout(function () {
+                              $('#myModal').modal('hide');
+                              window.location.href="/menus/menus";
+                         },3000);
+
+                     }
+                 },"json")
+     }
+</script>
+</body>
+</html>

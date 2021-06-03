@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+
+  <mycss th:replace="fragments::topcss"></mycss>
+
+  <body>
+
+    <div th:replace="fragments::topnav">
+
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-2">
+
+         <div th:replace="fragments::leftmenu">
+
+         </div>
+        </div>
+        <div class="col-md-10">
+          主窗口
+        </div>
+      </div>
+    </div>
+
+  <div th:replace="fragments::footjs"></div>
+
+  </body>
+</html>

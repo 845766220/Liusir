@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Signin Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+   <!-- <link href="../../assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet"> -->
+
+    <!-- Custom styles for this template -->
+    <link href="/bootstrap/dist/css/signin.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <form action="/login/checkpassword" method="post" class="form-signin">
+        <h2 class="form-signin-heading">请登录</h2>
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input name="user_name" type="email" id="inputEmail" class="form-control" placeholder="电子邮件地址" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input name="user_pwd" type="password" id="inputPassword" class="form-control" placeholder="密码" required>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> 记住密码 &nbsp;&nbsp;&nbsp;&nbsp; <span id="span1" style="color:#ff0000;" th:text="${error}"></span>
+          </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+      </form>
+
+    </div> <!-- /container -->
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
+  <script>
+    //三秒后 错误信息自动消失
+    setTimeout(function () {
+      //让错误文本消失
+      var span= document.getElementById("span1");
+      span.innerHTML='';
+    },3000);
+  </script>
+  </body>
+</html>

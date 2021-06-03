@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Dashboard Template for Bootstrap</title>
+    <mycss th:replace="fragments::topcss">
+
+    </mycss>
+
+</head>
+
+<body>
+
+<div th:replace="fragments::topnav">
+
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2">
+
+            <div th:replace="fragments::leftmenu">
+
+            </div>
+        </div>
+        <div class="col-md-10">
+            <table class="table table-hover">
+                <caption><h2>用户角色映射</h2></caption>
+                <thead>
+                <tr>
+                    <td style="text-align: right" colspan="5">
+                        <button data-toggle="modal" data-target="#myModal" type="button" class="btn btn-success">新建
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>用户名</td>
+                    <td>角色名称</td>
+                    <td>编辑映射</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="userrole :${userroles}">
+                    <td th:text="${userrole.user_name}"></td>
+                    <td th:text="${userrole.role_desc}"></td>
+
+                    <td><button th:onclick="update([[${userrole.user_id}]],[[${userrole.role_id}]])" type="button" class="btn btn-warning">编辑
+                    </button></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<!-- 模态框 Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新建</h4>
+            </div>
+            <div class="modal-body">
+                <!-- 新建用户表单 -->
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="role_name" class="col-sm-3 control-label">角色</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="role_name" placeholder="请输入角色名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="role_desc" class="col-sm-3 control-label">角色描述</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="role_desc" placeholder="请输入角色描述">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <span id="span1"></span>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button onclick="save();" type="button" class="btn btn-primary">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!-- 这是编辑对话框 -->
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel2">编辑</h4>
+            </div>
+            <div class="modal-body">
+                <!-- 新建用户表单 -->
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="role_id2" class="col-sm-3 control-label">角色ID</label>
+                        <div class="col-sm-8">
+                            <input readonly type="text" class="form-control" id="role_id2" placeholder="请输入用户名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="role_name2" class="col-sm-3 control-label">角色名</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="role_name2" placeholder="请输入用户名">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="role_desc2" class="col-sm-3 control-label">角色描述</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="role_desc2" placeholder="请输入角色描述">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <span id="span2"></span>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button onclick="save2();" type="button" class="btn btn-primary">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div th:replace="fragments::footjs">
+
+</div>
+
+<script>
+    function save2() {
+        //保存数据 $('#user_name').text();
+        //$('#user_name').html();
+        var role_id= $('#role_id2').val();
+        var role_name= $('#role_name2').val();
+        var role_desc= $('#role_desc2').val();
+
+
+
+        //jquery   ajax
+        // get  post  ajax   load
+
+        $.post("/roles/update",
+            {"role_name":role_name,
+                "role_desc":role_desc,
+                "role_id":role_id
+            },
+            function (data) {
+                if(data.success=="true"){  // 错误.号写成了,号
+                    //数据插入成功
+                    //alert("数据插入成功");
+                    $('#span2').html("<font color='green'>数据刷新成功</font>");
+                    //定时器
+                    setTimeout(function () {
+                        $('#myModal2').modal('hide');
+                        window.location.href="/roles/roles";
+                    },2000);
+                }
+
+            },"json")
+    }
+
+    function update(user_id,role_id) {
+        //根据id查数据
+
+        console.log("userid="+user_id+" role="+role_id)
+        var url="/roles/queryRoleById";
+        //四个参数  1.url  2.传给服务器的参数 json  3.回调函数  4.返回数据类型
+        $.post(url,{"role_id":id},function (data){
+                                  //调试成功后的处理
+                console.log(data);
+            var role = data.role;
+            //对话框
+            //对话框弹出之前准备数据
+            $('#role_id2').val(role.role_id);
+            $('#role_name2').val(role.role_name);
+            $('#role_desc2').val(role.role_desc);
+
+            $('#myModal2').modal('show');
+
+        },"json");
+    }
+
+    function delRole(id) {
+        //
+        //alert(userId);
+        if(window.confirm("确定要删除吗")) {
+            //执行删除
+            //浏览器跳转到  删除超链接
+            var url="/roles/del"
+            $.post(url,{"role_id":id},function (data) {
+                if (data.success=="true"){
+                    //
+                    window.location.href="/roles/roles";
+                }
+
+            },"json");
+        }else{
+            //什么也不做
+        }
+    }
+
+    function save() {
+        //保存数据 $('#user_name').text();
+        //$('#user_name').html();
+        var role_name= $('#role_name').val();
+        var role_desc= $('#role_desc').val();
+
+        //jquery   ajax
+        // get  post  ajax   load
+
+        $.post("/roles/insert",
+               {"role_name":role_name,
+                "role_desc":role_desc
+               },
+               function (data) {
+                   if(data.success=="true"){  // 错误.号写成了,号
+                       //数据插入成功
+                       //alert("数据插入成功");
+                       $('#span1').html("<font color='green'>数据插入成功</font>");
+                       //定时器
+                       setTimeout(function () {
+                           $('#myModal').modal('hide');
+                           window.location.href="/roles/roles";
+                       },2000);
+                   }
+
+               },"json")
+    }
+
+
+</script>
+
+</body>
+</html>
